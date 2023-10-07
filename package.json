@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "sever": "node server.js",
-    "test":"nodemon server.js"
+    "sever": "nodemon server.js 5800",
+    "client":"nodemon server.js 127.0.0.1 5800"
   },
   "keywords": [],
   "author": "",
