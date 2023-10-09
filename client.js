@@ -1,44 +1,39 @@
-'use-strict';
-import {stdin,stdout} from 'node:process';
-import { argv } from 'node:process';
-import * as net from 'node:net';
-import readline from 'node:readline';
+"use strict";
+import { stdin, stdout } from "process";
+import * as net from "net";
+import readline from "readline";
+
 const rl = readline.createInterface({
-    input:stdin,
-    output:stdout
+  input: stdin,
+  output: stdout,
 });
 
 const socket = new net.Socket();
-const host = argv[2];
-const port = argv[3];
+const host = process.argv[2];
+const port = process.argv[3];
 
-if (argv.length < 3) {
-    console.error("FATAL ERROR, last argument not found");
-    process.exit(1);
+if (!host || !port) {
+  console.error("FATAL ERROR: Host and port are required.");
+  process.exit(1);
 }
 
-socket.connect(port,host,()=> {
-    console.log(`connected to ${host}:${port}`);
+socket.connect(port, host, () => {
+  console.log(`Connected to ${host}:${port}`);
 });
 
-socket.on('error',(err)=> {
-    throw err;
+socket.on("error", (err) => {
+  console.error("Socket error:", err.message);
 });
 
-setTimeout(() => {
-    rl.question('Send a username: \n',(x)=> {
-        socket.write(x);    
-    });
-}, 500);
-
-rl.on('line',(line) => {
-    socket.write(line);
-})
-
-socket.on('data',(x)=> {
-    console.log(x.toString('utf-8'));
+socket.on("data", (data) => {
+  console.log(data.toString("utf-8"));
 });
 
-socket.on('close',()=> {
-    process.exit(1);
-})
+rl.on("line", (line) => {
+  socket.write(line);
+});
+
+socket.on("close", () => {
+  console.log("Connection closed.");
+  process.exit(0);
+});
